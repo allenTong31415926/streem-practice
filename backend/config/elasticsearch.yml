@@ -1,0 +1,15 @@
+default: &default
+  url: https://sample.es.streem.com.au
+  user: candidate
+  password: streem
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  url: <%= ENV['ELASTICSEARCH_URL'] || 'https://sample.es.streem.com.au' %>
+  user: <%= ENV['ELASTICSEARCH_USER'] || 'candidate' %>
+  password: <%= ENV['ELASTICSEARCH_PASSWORD'] || 'streem' %>
