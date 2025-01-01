@@ -1,5 +1,5 @@
 class KeywordsController < ApplicationController
-  # Handles the search request and performs Elasticsearch queries with a boolean query,
+  # Handles the results request and performs Elasticsearch queries with a boolean query,
   # date range filter, and a specified time interval. Aggregates results into buckets
   # grouped by date and medium type, and returns them as JSON.
   #
@@ -13,7 +13,7 @@ class KeywordsController < ApplicationController
   # @option params [String] :interval The time interval for bucketing results (e.g., "1d" for 1 day).
   #   Example: "2d".
   #
-  # @return [JSON] The aggregated search results in the following format:
+  # @return [JSON] The aggregated results in the following format:
   #   @example
   #     {
   #       "aggregations": {
@@ -40,7 +40,7 @@ class KeywordsController < ApplicationController
   #
   # @raise [ActionController::BadRequest] If required parameter :query is missing.
   # @raise [StandardError] If Elasticsearch encounters an issue.
-  def search
+  def results
     if params[:query].blank?
       render json: { error: "Keyword is required" }, status: :bad_request
       return
