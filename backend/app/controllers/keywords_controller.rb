@@ -1,5 +1,46 @@
 class KeywordsController < ApplicationController
-  def search
+  # Handles the results request and performs Elasticsearch queries with a boolean query,
+  # date range filter, and a specified time interval. Aggregates results into buckets
+  # grouped by date and medium type, and returns them as JSON.
+  #
+  # @param [Hash] params The request parameters (all required).
+  # @option params [String] :query The search query string.
+  #   Example: "Wilson".
+  # @option params [String] :before The end timestamp for the date range filter (ISO 8601 format).
+  #   Example: "2019-08-30T23:59:59".
+  # @option params [String] :after The start timestamp for the date range filter (ISO 8601 format).
+  #   Example: "2019-08-20T00:00:00".
+  # @option params [String] :interval The time interval for bucketing results (e.g., "1d" for 1 day).
+  #   Example: "2d".
+  #
+  # @return [JSON] The aggregated results in the following format:
+  #   @example
+  #     {
+  #       "aggregations": {
+  #         "first_agg": {
+  #           "buckets": [
+  #             {
+  #               "key_as_string": "2019-08-20T00:00:00.000Z",
+  #               "key": 1566259200000,
+  #               "doc_count": 2878,
+  #               "second_agg": {
+  #                 "buckets": [
+  #                   { "key" => "Online", "doc_count" => 1774 },
+  #                   { "key" => "TV", "doc_count" => 518 },
+  #                   { "key" => "Radio", "doc_count" => 375 },
+  #                   { "key" => "Print", "doc_count" => 311 }
+  #                 ]
+  #               }
+  #             },
+  #             ...
+  #           ]
+  #         }
+  #       }
+  #     }
+  #
+  # @raise [ActionController::BadRequest] If required parameter :query is missing.
+  # @raise [StandardError] If Elasticsearch encounters an issue.
+  def results
     if params[:query].blank?
       render json: { error: "Keyword is required" }, status: :bad_request
       return

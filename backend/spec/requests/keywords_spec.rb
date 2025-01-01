@@ -32,10 +32,10 @@ RSpec.describe "Keywords", type: :request do
       allow(ElasticsearchClient).to receive(:search).and_return(elasticsearch_response)
     end
 
-    describe "GET /search" do
+    describe "GET /results" do
       context "when valid parameters are provided" do
         it "returns the expected response" do
-          get "/search", params: {
+          get "/results", params: {
             query: "Wilson",
             before: "2019-08-30T23:59:59",
             after: "2019-08-20T00:00:00",
@@ -58,7 +58,7 @@ RSpec.describe "Keywords", type: :request do
 
       context "when query parameter is missing" do
         it "returns a bad request error" do
-          get "/search"
+          get "/results"
 
           expect(response).to have_http_status(:bad_request)
           json_response = JSON.parse(response.body)
@@ -72,7 +72,7 @@ RSpec.describe "Keywords", type: :request do
         end
 
         it "returns an internal server error" do
-          get "/search", params: {
+          get "/results", params: {
             query: "Wilson",
             before: "2023-01-02T00:00:00",
             after: "2023-01-01T00:00:00",
