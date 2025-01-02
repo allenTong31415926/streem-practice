@@ -21,7 +21,8 @@
           id="interval"
           v-model="form.interval"
           required
-          placeholder="e.g., 1d, 5d"
+          @input="validateInterval"
+          ref="intervalInput"
         />
       </div>
       <button type="submit" class="submit-btn">Search</button>
@@ -65,7 +66,7 @@ export default defineComponent({
         query: "",
         after: formattedOneMonthAgo, // Default to one month ago
         before: today, // Default to today's date
-        interval: "",
+        interval: "1d",
       },
       chartData: {
         labels: [],
@@ -78,9 +79,26 @@ export default defineComponent({
         ],
       } as unknown as ChartData,
       error: null as string | null,
+      intervalErrorMessage:
+        "Enter a positive number followed by 'd' (e.g., 1d).",
     };
   },
+  computed: {
+    isIntervalValid(): boolean {
+      // Regex to validate interval format (positive number followed by 'd')
+      const intervalRegex = /^[1-9][0-9]*d$/;
+      return intervalRegex.test(this.form.interval);
+    },
+  },
   methods: {
+    validateInterval() {
+      const intervalInput = this.$refs.intervalInput as HTMLInputElement;
+      if (!this.isIntervalValid) {
+        intervalInput.setCustomValidity(this.intervalErrorMessage);
+      } else {
+        intervalInput.setCustomValidity(""); // Clear the custom error
+      }
+    },
     async fetchData() {
       try {
         this.error = null;
