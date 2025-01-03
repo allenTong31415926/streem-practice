@@ -145,7 +145,7 @@ class KeywordsController < ApplicationController
           {
             "doc_count": bucket["doc_count"],
             "key": bucket["key"],
-            "key_as_string": bucket["key_as_string"],
+            "key_as_string": Date.parse(bucket["key_as_string"]).to_s,
             "second_agg": {
               "buckets": bucket["second_agg"]["buckets"].map do |sub_bucket|
                 {
